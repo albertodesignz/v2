@@ -1,3 +1,14 @@
+/* Import Jumble font */
+@font-face {
+  font-family: 'Jumble';
+  src: url('./fonts/Jumble.woff2') format('woff2'),
+       url('./fonts/Jumble.woff') format('woff'),
+       url('./fonts/Jumble.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;

@@ -154,3 +154,31 @@
     font-size: 14px;
   }
 }
+
+/* Custom font styling */
+@font-face {
+  font-family: 'Jumble';
+  src: url('./fonts/Jumble.woff2') format('woff2'),
+       url('./fonts/Jumble.woff') format('woff'),
+       url('./fonts/Jumble.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Emotion-specific styles */
+.emotion-happy {
+  background: linear-gradient(135deg, #ffd2f2, #ffb8e3);
+}
+
+.emotion-sad {
+  background: linear-gradient(135deg, #98ccff, #005fa3);
+}
+
+.emotion-mad {
+  background: linear-gradient(135deg, #ff5c5c, #cc0000);
+}
+
+.emotion-scared {
+  background: linear-gradient(135deg, #ffe28a, #ffaa00);
+}

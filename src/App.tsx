@@ -21,23 +21,35 @@ const profile = {
   ]
 };
 
-// Demo data for CircularGallery, using local emotion images
+// Demo data for CircularGallery, using local emotion images with enhanced data
 const emotionGallery = [
   {
     image: happyImg,
-    label: "Happy"
+    label: "Happy",
+    title: "Pink & Blue Monster",
+    gradient: "linear-gradient(135deg, #ffd2f2, #ffb8e3)",
+    emoji: "🟠"
   },
   {
     image: sadImg,
-    label: "Sad"
+    label: "Sad",
+    title: "Blue Monster",
+    gradient: "linear-gradient(135deg, #98ccff, #005fa3)",
+    emoji: "🔵"
   },
   {
     image: madImg,
-    label: "Mad"
+    label: "Mad",
+    title: "Red Monster",
+    gradient: "linear-gradient(135deg, #ff5c5c, #cc0000)",
+    emoji: "🔴"
   },
   {
     image: scaredImg,
-    label: "Scared"
+    label: "Scared",
+    title: "Orange Monster",
+    gradient: "linear-gradient(135deg, #ffe28a, #ffaa00)",
+    emoji: "🟠"
   }
 ];
 

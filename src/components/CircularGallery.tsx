@@ -24,16 +24,28 @@ function autoBind(instance: any) {
   });
 }
 
-function createTextTexture(gl: any, text: string, font = "bold 30px monospace", color = "black") {
+function createTextTexture(gl: any, text: string, font = "bold 30px Jumble", color = "white") {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
-  context!.font = font;
+  
+  // Try to load Jumble font, fallback to system font
+  let fontToUse = font;
+  try {
+    // Check if Jumble font is available
+    if (!document.fonts.check('bold 30px Jumble')) {
+      fontToUse = "bold 30px Arial, sans-serif";
+    }
+  } catch (e) {
+    fontToUse = "bold 30px Arial, sans-serif";
+  }
+  
+  context!.font = fontToUse;
   const metrics = context!.measureText(text);
   const textWidth = Math.ceil(metrics.width);
-  const textHeight = Math.ceil(parseInt(font, 10) * 1.2);
-  canvas.width = textWidth + 20;
-  canvas.height = textHeight + 20;
-  context!.font = font;
+  const textHeight = Math.ceil(parseInt(fontToUse, 10) * 1.2);
+  canvas.width = textWidth + 40; // Extra padding for better rendering
+  canvas.height = textHeight + 40;
+  context!.font = fontToUse;
   context!.fillStyle = color;
   context!.textBaseline = "middle";
   context!.textAlign = "center";
@@ -53,7 +65,7 @@ class Title {
   private font: string;
   public mesh: any;
 
-  constructor({ gl, plane, renderer, text, textColor = "#545050", font = "30px sans-serif" }: {
+  constructor({ gl, plane, renderer, text, textColor = "#ffffff", font = "bold 30px Jumble" }: {
     gl: any;
     plane: any;
     renderer: any;
@@ -125,6 +137,7 @@ class Media {
   private textColor: string;
   private borderRadius: number;
   private font: string;
+  private gradient: string;
   public plane: any;
   public program: any;
   public title: any;
@@ -152,6 +165,7 @@ class Media {
     textColor,
     borderRadius = 0,
     font,
+    gradient,
   }: {
     geometry: any;
     gl: any;
@@ -167,6 +181,7 @@ class Media {
     textColor: string;
     borderRadius?: number;
     font: string;
+    gradient?: string;
   }) {
     this.extra = 0;
     this.geometry = geometry;
@@ -183,10 +198,40 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
+    this.gradient = gradient;
     this.createShader();
     this.createMesh();
     this.createTitle();
     this.onResize();
+  }
+
+  private parseGradientColors(gradientStr: string): { start: [number, number, number], end: [number, number, number] } {
+    // Default colors if no gradient is provided
+    if (!gradientStr) {
+      return { start: [1.0, 1.0, 1.0], end: [0.8, 0.8, 0.8] };
+    }
+
+    // Parse CSS gradient string
+    const matches = gradientStr.match(/#([a-fA-F0-9]{6})/g);
+    if (matches && matches.length >= 2) {
+      const startColor = this.hexToRgb(matches[0]);
+      const endColor = this.hexToRgb(matches[1]);
+      return {
+        start: [startColor.r / 255, startColor.g / 255, startColor.b / 255],
+        end: [endColor.r / 255, endColor.g / 255, endColor.b / 255]
+      };
+    }
+
+    return { start: [1.0, 1.0, 1.0], end: [0.8, 0.8, 0.8] };
+  }
+
+  private hexToRgb(hex: string): { r: number, g: number, b: number } {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : { r: 255, g: 255, b: 255 };
   }
 
   createShader() {
@@ -216,11 +261,17 @@ class Media {
         uniform vec2 uPlaneSizes;
         uniform sampler2D tMap;
         uniform float uBorderRadius;
+        uniform vec3 uGradientStart;
+        uniform vec3 uGradientEnd;
         varying vec2 vUv;
         
         float roundedBoxSDF(vec2 p, vec2 b, float r) {
           vec2 d = abs(p) - b;
           return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
+        }
+        
+        vec3 gradient(vec2 uv) {
+          return mix(uGradientStart, uGradientEnd, uv.x + uv.y);
         }
         
         void main() {
@@ -239,7 +290,9 @@ class Media {
             discard;
           }
           
-          gl_FragColor = vec4(color.rgb, 1.0);
+          // Apply gradient background
+          vec3 bgColor = gradient(vUv);
+          gl_FragColor = vec4(mix(bgColor, color.rgb, color.a), 1.0);
         }
       `,
       uniforms: {
@@ -249,6 +302,8 @@ class Media {
         uSpeed: { value: 0 },
         uTime: { value: 100 * Math.random() },
         uBorderRadius: { value: this.borderRadius },
+        uGradientStart: { value: this.parseGradientColors(this.gradient).start },
+        uGradientEnd: { value: this.parseGradientColors(this.gradient).end },
       },
       transparent: true,
     });
@@ -425,18 +480,10 @@ class App {
 
   createMedias(items: any[], bend = 1, textColor: string, borderRadius: number, font: string) {
     const defaultItems = [
-      { image: `https://picsum.photos/seed/1/800/600?grayscale`, text: "Bridge" },
-      { image: `https://picsum.photos/seed/2/800/600?grayscale`, text: "Desk Setup" },
-      { image: `https://picsum.photos/seed/3/800/600?grayscale`, text: "Waterfall" },
-      { image: `https://picsum.photos/seed/4/800/600?grayscale`, text: "Strawberries" },
-      { image: `https://picsum.photos/seed/5/800/600?grayscale`, text: "Deep Diving" },
-      { image: `https://picsum.photos/seed/16/800/600?grayscale`, text: "Train Track" },
-      { image: `https://picsum.photos/seed/17/800/600?grayscale`, text: "Santorini" },
-      { image: `https://picsum.photos/seed/8/800/600?grayscale`, text: "Blurry Lights" },
-      { image: `https://picsum.photos/seed/9/800/600?grayscale`, text: "New York" },
-      { image: `https://picsum.photos/seed/10/800/600?grayscale`, text: "Good Boy" },
-      { image: `https://picsum.photos/seed/21/800/600?grayscale`, text: "Coastline" },
-      { image: `https://picsum.photos/seed/12/800/600?grayscale`, text: "Palm Trees" },
+      { image: `https://picsum.photos/seed/1/800/600?grayscale`, text: "Bridge", title: "Bridge", gradient: "linear-gradient(135deg, #ffd2f2, #ffb8e3)" },
+      { image: `https://picsum.photos/seed/2/800/600?grayscale`, text: "Desk Setup", title: "Desk Setup", gradient: "linear-gradient(135deg, #ffe28a, #ffaa00)" },
+      { image: `https://picsum.photos/seed/3/800/600?grayscale`, text: "Waterfall", title: "Waterfall", gradient: "linear-gradient(135deg, #ff5c5c, #cc0000)" },
+      { image: `https://picsum.photos/seed/4/800/600?grayscale`, text: "Strawberries", title: "Strawberries", gradient: "linear-gradient(135deg, #98ccff, #005fa3)" },
     ];
     const galleryItems = items && items.length ? items : defaultItems;
     this.mediasImages = galleryItems.concat(galleryItems);
@@ -450,12 +497,13 @@ class App {
         renderer: this.renderer,
         scene: this.scene,
         screen: this.screen,
-        text: data.text,
+        text: data.title || data.text, // Use title if available, fallback to text
         viewport: this.viewport,
         bend,
         textColor,
         borderRadius,
         font,
+        gradient: data.gradient, // Pass gradient data
       });
     });
   }

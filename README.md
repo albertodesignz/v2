@@ -17,7 +17,7 @@ A mobile-first React starter with custom ProfileCard and CircularGallery compone
 ### 1. Install dependencies
 
 ```bash
-npm install
+run dev
 # or
 yarn install
 ```
