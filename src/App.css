@@ -1,0 +1,156 @@
+/* Container styles */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ProfileCard styles */
+.profile-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 32px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin-right: 16px;
+  object-fit: cover;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  margin: 0 0 4px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.profile-title {
+  margin: 0;
+  font-size: 16px;
+  color: #666;
+}
+
+.profile-description {
+  margin: 0 0 16px 0;
+  color: #4a4a4a;
+  line-height: 1.5;
+}
+
+.profile-socials {
+  display: flex;
+  gap: 12px;
+}
+
+.social-link {
+  padding: 8px 12px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.social-link:hover {
+  background: #e0e0e0;
+}
+
+/* CircularGallery styles */
+.gallery-title {
+  text-align: center;
+  margin: 32px 0 24px 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.circular-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.gallery-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 12px;
+  object-fit: cover;
+  border: 3px solid #f1f5f9;
+  transition: border-color 0.3s ease;
+}
+
+.gallery-item:hover .gallery-image {
+  border-color: #e2e8f0;
+}
+
+.gallery-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .profile-card {
+    padding: 20px;
+  }
+  
+  .circular-gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 16px;
+    max-width: 100%;
+  }
+  
+  .gallery-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .gallery-label {
+    font-size: 14px;
+  }
+}

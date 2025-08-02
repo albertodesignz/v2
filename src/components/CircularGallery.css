@@ -1,0 +1,69 @@
+/* Circular Gallery WebGL Component */
+.circular-gallery {
+  width: 100%;
+  height: 60vh;
+  min-height: 400px;
+  overflow: hidden;
+  position: relative;
+  cursor: grab;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.circular-gallery:active {
+  cursor: grabbing;
+}
+
+.circular-gallery canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* Loading state */
+.circular-gallery:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #555;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 1;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Hide loading animation when WebGL canvas is loaded */
+.circular-gallery:has(canvas) {
+  position: relative;
+}
+
+.circular-gallery:has(canvas):before {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .circular-gallery {
+    height: 50vh;
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .circular-gallery {
+    height: 40vh;
+    min-height: 250px;
+  }
+}
